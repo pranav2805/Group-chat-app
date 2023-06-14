@@ -18,7 +18,7 @@ function login(e){
         alert(response.data.message);
         //response.redirect('/expenses');
         localStorage.setItem('token', response.data.token);
-        window.location.href = "../views/expense.html"
+        // window.location.href = "../views/expense.html"
     })
     .catch(err => {
         //alert(err.response.data.message);
