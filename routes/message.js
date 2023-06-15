@@ -7,4 +7,6 @@ const router = express.Router();
 
 router.post('/messages', userAuthenticate.authenticate, msgController.postMessage);
 
+router.get('/messages', userAuthenticate.authenticate, msgController.getMessages);
+
 module.exports = router;
