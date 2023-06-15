@@ -13,10 +13,10 @@ exports.getMessages = async (req, res) => {
                 required: true,
                 attributes: ['name']
             }
-           ]
+           ],
+           order: ['updatedAt']
         });
-        //const messages = await User.findAll({include: Message, required: true})
-        console.log(messages);
+        // console.log(messages);
         res.status(200).json({messages: messages});
     } catch(err) {
         console.log(err);
@@ -27,8 +27,8 @@ exports.getMessages = async (req, res) => {
 exports.postMessage = async (req, res) => {
     try{
         const message = req.body.message;
-        await req.user.createMessage({textMessage: message});
-        res.status(201).json({success: true, message: 'Message added successfully!!'})
+        const msg = await req.user.createMessage({textMessage: message});
+        res.status(201).json({success: true, textMessage: msg.textMessage, user: {name: req.user.name}})
     } catch(err){
         console.log(err);
         res.status(500).json({err: err.message});
