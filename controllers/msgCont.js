@@ -2,21 +2,28 @@ const User = require('../models/user');
 const Message = require('../models/message');
 
 const sequelize = require('../util/database');
+const { Op } = require("sequelize");
 
 exports.getMessages = async (req, res) => {
     try{
+        let lastMsgId = req.query.lastMessageId;
+        // console.log("lastMsgId in cintroller>>>",lastMsgId);
+        if(lastMsgId === undefined)
+            lastMsgId = 0;
+
         const messages = await Message.findAll({
-           attributes: ['id', 'textMessage'],
-           include: [
-            {
-                model: User,
-                required: true,
-                attributes: ['name']
-            }
-           ],
-           order: ['updatedAt']
+            attributes: ['id', 'textMessage'],
+            where: {id : { [Op.gt]: lastMsgId } },
+            include: [
+                {
+                    model: User,
+                    required: true,
+                    attributes: ['name']
+                }
+            ],
+            order: ['updatedAt']
         });
-        // console.log(messages);
+        //console.log(messages);
         res.status(200).json({messages: messages});
     } catch(err) {
         console.log(err);
