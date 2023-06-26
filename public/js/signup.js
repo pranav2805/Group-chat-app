@@ -25,6 +25,7 @@ function addUser(e) {
         axios.post('http://localhost:3000/signup', userDetails)
             .then(response => {
                 alert(response.data.message);
+                window.location.href = "login.html";
             })
             .catch(err => {
                 //alert(err.response.data.message);
