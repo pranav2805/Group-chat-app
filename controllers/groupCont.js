@@ -19,7 +19,7 @@ exports.getGroups = async (req, res) => {
         // })
 
         const userGroups = await UserGroup.findAll({
-            attributes: ['userId', 'groupId'],
+            attributes: ['userId', 'groupId', 'isAdmin'],
                 where: { userId: req.user.id }
         })
 
@@ -28,7 +28,8 @@ exports.getGroups = async (req, res) => {
         for(let i=0;i<userGroups.length;i++){
             for(let j=0;j<groups.length;j++){
                 if(userGroups[i].groupId === groups[j].id){
-                    userGroupDetails.push({'userId': userGroups[i].userId, 'groupId': userGroups[i].groupId, 'groupName': groups[j].name})
+                    userGroupDetails.push({'userId': userGroups[i].userId, 'groupId': userGroups[i].groupId, 'groupName': groups[j].name, 'isAdmin': userGroups[i].isAdmin});
+                    break;
                 }
             }
         }
@@ -90,7 +91,7 @@ exports.joinGroup = async (req, res) => {
         const group = await Group.findOne({where: {name: groupName}});
 
         if(group){
-            await UserGroup.create({userId: req.user.id, groupId: group.id});
+            await UserGroup.create({userId: req.user.id, groupId: group.id, isAdmin: false});
             res.status(200).json({success: true, group: group, message: 'You successfully joined the group!!'})
         }else{
             throw new Error('Group does not exists!!');
@@ -102,5 +103,138 @@ exports.joinGroup = async (req, res) => {
             return res.status(500).json({success: false, message: 'You are already part of this group!!'});
         }
         res.status(500).json({success: false, message: err});
+    }
+}
+
+exports.addUser = async (req, res) => {
+    try{
+        const groupId = req.query.groupId;
+        const {email} = req.body;
+
+        const user = await User.findOne({where: {email: email}});
+        if(user){
+            await UserGroup.create({userId: user.id, groupId: groupId, isAdmin: false});
+            res.status(200).json({success: true, message: 'User added successfully!!'});
+        }else{
+            throw new Error('User does not exists!!');
+        }
+    }catch(err){
+        console.log(err);
+        if(err.message === 'Validation error'){
+            return res.status(500).json({success: false, message: 'User is already part of this group!!'});
+        }
+        res.status(500).json({success: false, message: err.message});
+    }
+}
+
+exports.getUsers = async (req, res) => {
+    try{
+        const groupId = req.query.groupId;
+        // const users = await UserGroup.findAll({
+        //     attributes: ['userId'],
+        //     where: {groupId: groupId},
+        //     include: [
+        //         {
+        //             model: User,
+        //             attributes: ['id','name']
+        //         }
+        //     ]
+        // })
+        // if(users && users.length>0){
+        //     res.status(200).json({success: true, users: users});
+        // }
+        const usergroups = await UserGroup.findAll({
+            attributes: ['userId'],
+            where: {groupId: groupId}
+        })
+
+        const users = await User.findAll();
+        let userDetails = [];
+
+        for(let i=0;i<usergroups.length;i++){
+            for(let j=0;j<users.length;j++){
+                if(usergroups[i].userId === users[j].id){
+                    userDetails.push({userId: users[j].id, name: users[j].name});
+                    break;
+                }
+            }
+        }
+
+        if(userDetails && userDetails.length>0){
+            res.status(200).json({success: true, users: userDetails});
+        }
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({success: false, message: err.message});
+    }
+}
+
+exports.removeUser = async (req, res) => {
+    try{
+        const userId = req.query.userId;
+        const groupId = req.query.groupId;
+        await UserGroup.destroy({where: {userId: userId, groupId: groupId}});
+
+        res.status(200).json({success: true, message: 'User removed successfully!!'});
+    }catch(err){
+        console.log(err);
+        res.status(500).json({success: false, message: err.message});
+    }
+}
+
+exports.getUsers = async (req, res) => {
+    try{
+        const groupId = req.query.groupId;
+        // const users = await UserGroup.findAll({
+        //     attributes: ['userId'],
+        //     where: {groupId: groupId},
+        //     include: [
+        //         {
+        //             model: User,
+        //             attributes: ['id','name']
+        //         }
+        //     ]
+        // })
+        // if(users && users.length>0){
+        //     res.status(200).json({success: true, users: users});
+        // }
+        const usergroups = await UserGroup.findAll({
+            attributes: ['userId'],
+            where: {groupId: groupId, isAdmin: false}
+        })
+
+        const users = await User.findAll();
+        let userDetails = [];
+
+        for(let i=0;i<usergroups.length;i++){
+            for(let j=0;j<users.length;j++){
+                if(usergroups[i].userId === users[j].id){
+                    userDetails.push({userId: users[j].id, name: users[j].name});
+                    break;
+                }
+            }
+        }
+
+        if(userDetails && userDetails.length>0){
+            res.status(200).json({success: true, users: userDetails});
+        }
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({success: false, message: err.message});
+    }
+}
+
+exports.makeAdmin = async (req, res) => {
+    try{
+        const {groupId, userId} = req.body;
+        await UserGroup.update({isAdmin: true},
+            {where: {userId: userId, groupId: groupId}}
+        )
+        res.status(200).json({success: true, message: 'User has been made admin of the group!!'});
+    }catch(err){
+        console.log(err);
+        res.status(500).json({success: false, message: err.message});
     }
 }
