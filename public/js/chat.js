@@ -110,8 +110,13 @@ function getMessagesFromGroup(groupId){
     localStorage.setItem('lastOpenedGroup', groupId);
     for(let group of groups){
         if(group.groupId === groupId){
+            document.getElementById('groupname').innerHTML = '';
             document.getElementById('groupname').innerHTML = `<h4>${group.groupName}</h4>`
-            console.log("hello from for loop");
+            if(group.isAdmin === true){
+                document.getElementById('buttons').innerHTML = `<a href="addUser.html"><button>Add user</button></a>
+                                                                <a href="removeUser.html"><button>Remove user</button></a>
+                                                                <a href="makeAdmin.html"><button>Make Admin</button></a>`
+            }
             break;
         }
     }

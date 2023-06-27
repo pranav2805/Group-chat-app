@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="createForm" method="POST">
+        <input type="email" id="email" placeholder="enter email id" required>
+        <button type="submit" id="createBtn" onclick="addUser(event)">Add</button><br>
+        <a href="chat.html">Go to homepage</a>
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script>
+        function addUser(e){
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const email = document.getElementById('email');
+            if(email){
+                const groupId = JSON.parse(localStorage.getItem('lastOpenedGroup'));
+                axios.post(`http://localhost:3000/addUser?groupId=${groupId}`, {email: email.value}, {headers: {"Authorization": token} })
+                    .then(response => {
+                        alert(response.data.message);
+                        window.location.href = "chat.html";
+                    })
+                    .catch(err => {
+                        alert(err.response.data.message);
+                    })
+            }else{
+                alert("Please enter email id of the user")
+            }    
+        }
+    </script>
+</body>
+</html>

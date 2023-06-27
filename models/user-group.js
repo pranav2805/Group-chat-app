@@ -9,6 +9,11 @@ const UserGroup = sequelize.define('userGroup', {
         allowNull: false,
         primaryKey: true
     },
+    isAdmin:{
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+    }
 });
 
 module.exports = UserGroup;

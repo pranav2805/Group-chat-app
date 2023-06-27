@@ -20,14 +20,11 @@ app.use(cors({
 User.belongsToMany(Group, { through: UserGroup, foreignKey: 'userId'});
 Group.belongsToMany(User, { through: UserGroup, foreignKey: 'groupId'});
 
-// Group.hasMany(UserGroup);
-
 User.hasMany(Message);
 Message.belongsTo(User);
 
 Group.hasMany(Message);
 Message.belongsTo(Group);
-
 
 // Middlewares
 app.use(bodyParser.json());

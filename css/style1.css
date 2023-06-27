@@ -24,6 +24,13 @@ body{
     color: white;
     padding: 15px;
 }
+.group-header{
+    color: white;
+    padding-left: 30px;
+}
+.buttons{
+    margin-left: auto;
+}
 .body{
     flex: 1;
     color: black;
