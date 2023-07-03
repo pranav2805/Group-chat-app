@@ -3,7 +3,7 @@ const textMsg = document.getElementById('text-message');
 
 const token = localStorage.getItem('token');
 
-const api = 'http://35.173.198.167:5000'
+const api = 'http://35.173.198.167:3000'
 
 let groupID;
 let groups
@@ -35,7 +35,7 @@ const decodedToken = parseJwt(token);
 
 window.addEventListener('DOMContentLoaded', () => {
 
-    axios.get('http://35.173.198.167:5000/getGroups', {headers: {"Authorization": token}})
+    axios.get('http://35.173.198.167:3000/getGroups', {headers: {"Authorization": token}})
         .then(response => {
             localStorage.setItem('groups', JSON.stringify(response.data));
             response.data.group.forEach(response => {
@@ -49,7 +49,7 @@ window.addEventListener('DOMContentLoaded', () => {
     groupID = JSON.parse(localStorage.getItem('lastOpenedGroup'));
     getMessagesFromGroup(groupID);
     
-    // axios.get(`http://35.173.198.167:5000/messages`, {headers: {"Authorization": token} })
+    // axios.get(`http://35.173.198.167:3000/messages`, {headers: {"Authorization": token} })
     // .then(response => {
     //     response.data.messages.forEach(message => {
     //         showMessageOnScreen(message);
@@ -64,7 +64,7 @@ window.addEventListener('DOMContentLoaded', () => {
 //     const parentElement = document.getElementById('messages');
 //     parentElement.innerHTML = '';
 //     getMessages();
-// }, 5000)
+// }, 3000)
 
 // clearInterval(interval);
 
@@ -76,7 +76,7 @@ function addMessage(e){
         message: textMsg.value
     }
 
-    axios.post(`http://35.173.198.167:5000/messages?groupId=${groupID}`, obj, {headers: {"Authorization": token} })
+    axios.post(`http://35.173.198.167:3000/messages?groupId=${groupID}`, obj, {headers: {"Authorization": token} })
         .then(response => {
             console.log("response>>>",response);
             showMessageOnScreen(response.data);
@@ -135,7 +135,7 @@ function getMessagesFromGroup(groupId){
     if(groupChats && groupChats.length>0){
         lastMsgId = groupChats[groupChats.length-1].id;
     }
-    axios.get(`http://35.173.198.167:5000/getMessages?groupId=${groupId}&lastMessageId=${lastMsgId}`, {headers: {"Authorization": token} })
+    axios.get(`http://35.173.198.167:3000/getMessages?groupId=${groupId}&lastMessageId=${lastMsgId}`, {headers: {"Authorization": token} })
         .then(response => {
             // console.log(response);
             let newArray;

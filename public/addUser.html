@@ -19,7 +19,7 @@
             const email = document.getElementById('email');
             if(email){
                 const groupId = JSON.parse(localStorage.getItem('lastOpenedGroup'));
-                axios.post(`http://35.173.198.167:5000/addUser?groupId=${groupId}`, {email: email.value}, {headers: {"Authorization": token} })
+                axios.post(`http://35.173.198.167:3000/addUser?groupId=${groupId}`, {email: email.value}, {headers: {"Authorization": token} })
                     .then(response => {
                         alert(response.data.message);
                         window.location.href = "chat.html";
