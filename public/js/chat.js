@@ -3,6 +3,8 @@ const textMsg = document.getElementById('text-message');
 
 const token = localStorage.getItem('token');
 
+const api = 'http://35.173.198.167:5000'
+
 let groupID;
 let groups
 let parsedObject = JSON.parse(localStorage.getItem('groups'));
@@ -33,7 +35,7 @@ const decodedToken = parseJwt(token);
 
 window.addEventListener('DOMContentLoaded', () => {
 
-    axios.get('http://localhost:3000/getGroups', {headers: {"Authorization": token}})
+    axios.get('http://35.173.198.167:5000/getGroups', {headers: {"Authorization": token}})
         .then(response => {
             localStorage.setItem('groups', JSON.stringify(response.data));
             response.data.group.forEach(response => {
@@ -45,10 +47,9 @@ window.addEventListener('DOMContentLoaded', () => {
         })
 
     groupID = JSON.parse(localStorage.getItem('lastOpenedGroup'));
-    //console.log(typeof(groupID));
     getMessagesFromGroup(groupID);
     
-    // axios.get(`http://localhost:3000/messages`, {headers: {"Authorization": token} })
+    // axios.get(`http://35.173.198.167:5000/messages`, {headers: {"Authorization": token} })
     // .then(response => {
     //     response.data.messages.forEach(message => {
     //         showMessageOnScreen(message);
@@ -75,7 +76,7 @@ function addMessage(e){
         message: textMsg.value
     }
 
-    axios.post(`http://localhost:3000/messages?groupId=${groupID}`, obj, {headers: {"Authorization": token} })
+    axios.post(`http://35.173.198.167:5000/messages?groupId=${groupID}`, obj, {headers: {"Authorization": token} })
         .then(response => {
             console.log("response>>>",response);
             showMessageOnScreen(response.data);
@@ -112,10 +113,19 @@ function getMessagesFromGroup(groupId){
         if(group.groupId === groupId){
             document.getElementById('groupname').innerHTML = '';
             document.getElementById('groupname').innerHTML = `<h4>${group.groupName}</h4>`
+            document.getElementById('dropdown').innerHTML = '';
             if(group.isAdmin === true){
-                document.getElementById('buttons').innerHTML = `<a href="addUser.html"><button>Add user</button></a>
-                                                                <a href="removeUser.html"><button>Remove user</button></a>
-                                                                <a href="makeAdmin.html"><button>Make Admin</button></a>`
+                // document.getElementById('buttons').innerHTML = `<a href="addUser.html"><button>Add user</button></a>
+                //                                                 <a href="removeUser.html"><button>Remove user</button></a>
+                //                                                 <a href="makeAdmin.html"><button>Make Admin</button></a>`
+                const parentElement = document.getElementById('dropdown');
+                const childElement = `<button type="button" class="dropbtn">Group Admin</button>
+                                        <div class="dropdown-content" id="admin-actions">
+                                            <a href="addUser.html">Add user</a>
+                                            <a href="removeUser.html">Remove user</a> 
+                                            <a href="makeAdmin.html">Make someone as admin</a>
+                                        </div>`
+                parentElement.innerHTML = parentElement.innerHTML + childElement;
             }
             break;
         }
@@ -125,7 +135,7 @@ function getMessagesFromGroup(groupId){
     if(groupChats && groupChats.length>0){
         lastMsgId = groupChats[groupChats.length-1].id;
     }
-    axios.get(`http://localhost:3000/getMessages?groupId=${groupId}&lastMessageId=${lastMsgId}`, {headers: {"Authorization": token} })
+    axios.get(`http://35.173.198.167:5000/getMessages?groupId=${groupId}&lastMessageId=${lastMsgId}`, {headers: {"Authorization": token} })
         .then(response => {
             // console.log(response);
             let newArray;
@@ -139,9 +149,6 @@ function getMessagesFromGroup(groupId){
             newArray.forEach(message => {
                 showMessageOnScreen(message);
             })
-            // response.data.messages.forEach(message => {
-            //     showMessageOnScreen(message);
-            // })
         })
         .catch(err => {
             console.log(err);

@@ -22,7 +22,7 @@ function addUser(e) {
             password: password.value
         }
 
-        axios.post('http://localhost:3000/signup', userDetails)
+        axios.post('http://35.173.198.167:5000/signup', userDetails)
             .then(response => {
                 alert(response.data.message);
                 window.location.href = "login.html";

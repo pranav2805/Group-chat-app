@@ -16,7 +16,7 @@
         window.addEventListener("DOMContentLoaded", (e) => {
             e.preventDefault();
             const groupId = JSON.parse(localStorage.getItem('lastOpenedGroup'));
-            axios.get(`http://localhost:3000/getUsersAdmin?groupId=${groupId}`, {headers: {"Authorization": token} })
+            axios.get(`http://35.173.198.167:5000/getUsersAdmin?groupId=${groupId}`, {headers: {"Authorization": token} })
                 .then(response => {
                     // console.log(response);
                     response.data.users.forEach(data => {
@@ -31,7 +31,7 @@
         function showUserOnScreen(obj){
             const parentElement = document.getElementById('userList');
             const childHTML = `<li id="${obj.userId}" class="list-group-item">${obj.name}
-                               <button onclick="makeAdmin(${obj.userId})">Make Admin</button>
+                               <button onclick="makeAdmin(${obj.userId})">Set as Admin</button>
                                </li>`
             parentElement.innerHTML = parentElement.innerHTML + childHTML;
         }

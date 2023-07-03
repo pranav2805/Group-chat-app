@@ -3,6 +3,7 @@ const Message = require('../models/message');
 const User = require('../models/user');
 const UserGroup = require('../models/user-group');
 const { Op } = require("sequelize");
+const jwt = require('jsonwebtoken');
 
 exports.getGroups = async (req, res) => {
     try{
@@ -108,15 +109,23 @@ exports.joinGroup = async (req, res) => {
 
 exports.addUser = async (req, res) => {
     try{
+        const token = req.header('Authorization');
+        const userAdmin = jwt.verify(token, process.env.SECRET_TOKEN);
+
         const groupId = req.query.groupId;
         const {email} = req.body;
 
-        const user = await User.findOne({where: {email: email}});
-        if(user){
-            await UserGroup.create({userId: user.id, groupId: groupId, isAdmin: false});
-            res.status(200).json({success: true, message: 'User added successfully!!'});
+        const admin = UserGroup.findOne({where: {userId: userAdmin.userId, groupId: groupId, isAdmin: true}})
+        if(admin){
+            const user = await User.findOne({where: {email: email}});
+            if(user){
+                await UserGroup.create({userId: user.id, groupId: groupId, isAdmin: false});
+                res.status(200).json({success: true, message: 'User added successfully!!'});
+            }else{
+                throw new Error('User does not exists!!');
+            }
         }else{
-            throw new Error('User does not exists!!');
+            throw new Error('You are not the admin of this group!!');
         }
     }catch(err){
         console.log(err);
@@ -172,18 +181,26 @@ exports.getUsers = async (req, res) => {
 
 exports.removeUser = async (req, res) => {
     try{
+        const token = req.header('Authorization');
+        const user = jwt.verify(token, process.env.SECRET_TOKEN);
+
         const userId = req.query.userId;
         const groupId = req.query.groupId;
-        await UserGroup.destroy({where: {userId: userId, groupId: groupId}});
 
-        res.status(200).json({success: true, message: 'User removed successfully!!'});
+        const admin = UserGroup.findOne({where: {userId: user.userId, groupId: groupId, isAdmin: true}})
+        if(admin){
+            await UserGroup.destroy({where: {userId: userId, groupId: groupId}});
+            res.status(200).json({success: true, message: 'User removed successfully!!'});
+        }else{
+            throw new Error('You are not the admin of this group!!');
+        }
     }catch(err){
         console.log(err);
         res.status(500).json({success: false, message: err.message});
     }
 }
 
-exports.getUsers = async (req, res) => {
+exports.getUsersAdmin = async (req, res) => {
     try{
         const groupId = req.query.groupId;
         // const users = await UserGroup.findAll({
@@ -228,11 +245,20 @@ exports.getUsers = async (req, res) => {
 
 exports.makeAdmin = async (req, res) => {
     try{
+        const token = req.header('Authorization');
+        const user = jwt.verify(token, process.env.SECRET_TOKEN);
+
         const {groupId, userId} = req.body;
-        await UserGroup.update({isAdmin: true},
-            {where: {userId: userId, groupId: groupId}}
-        )
-        res.status(200).json({success: true, message: 'User has been made admin of the group!!'});
+
+        const admin = UserGroup.findOne({where: {userId: user.userId, groupId: groupId, isAdmin: true}})
+        if(admin){
+            await UserGroup.update({isAdmin: true},
+                {where: {userId: userId, groupId: groupId}})
+
+            res.status(200).json({success: true, message: 'User has been made admin of the group!!'});
+        }else{
+            throw new Error('You are not the admin of this group!!');
+        }
     }catch(err){
         console.log(err);
         res.status(500).json({success: false, message: err.message});

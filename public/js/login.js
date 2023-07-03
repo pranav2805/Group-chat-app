@@ -13,7 +13,7 @@ function login(e){
         password: passwordInput.value
     }
 
-    axios.post('http://localhost:3000/login', loginDetails)
+    axios.post('http://35.173.198.167:5000/login', loginDetails)
     .then(response => {
         alert(response.data.message);
         //response.redirect('/expenses');
