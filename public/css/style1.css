@@ -1,0 +1,127 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+body{
+    height: 100vh;
+    /* background-color: #f8f8f8; */
+    background-image: url(signup.gif);
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+hr{
+    position: relative;
+    height: 5px;
+    background: black;
+}
+.container{
+    width: 450px;
+    height: 95vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 2px 20px rgba(0,0,0,0.4);
+    background-color: dodgerblue;
+}
+.header h1{
+    color: white;
+    padding: 15px;
+}
+.group-header{
+    color: white;
+    padding-left: 30px;
+}
+.buttons{
+    margin-left: auto;
+}
+.body{
+    flex: 1;
+    color: black;
+    /* background-color: rgba(0,0,0,0.7); */
+    padding: 20px 30px;
+    height: 540px;
+}
+hr.vertical {
+    height:100%; /* you might need some positioning for this to work, see other questions about 100% height */
+    width:0;
+    border:5px solid black;
+}
+li:nth-child(odd) { background: #ffffff; }
+li:nth-child(even) { background: gray; }
+.message{
+    /* background-color: dodgerblue; */
+    padding: 5px;
+    color: white;
+    width: fit-content;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+.user_message{
+    margin-left: auto;
+    background-color: white;
+    color: black;
+}
+.footer form{
+    display: flex;
+}
+form input{
+    flex: 1;
+    height: 40px;
+    border: none;
+    outline: none;
+    padding-left: 5px;
+    font-size: 16px;
+}
+form button{
+    width: 100px;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: dodgerblue;
+    color: white;
+    cursor: pointer;
+}
+form button:hover{
+    background-color: blue;
+    transition: 0.2s ease;
+}
+
+.dropbtn {
+    background-color: white;
+    color: black;
+    padding: 12px;
+    font-size: 12px;
+    border: none;
+    margin-right: auto;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+    padding-right: 5px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
