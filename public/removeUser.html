@@ -38,7 +38,7 @@
 
         function removeUser(userId){
             const groupId = JSON.parse(localStorage.getItem('lastOpenedGroup'));
-            axios.delete(`http://localhost:3000/removeUser?groupId=${groupId}&userId=${userId}`, {headers: {"Authorization": token} })
+            axios.delete(`http://35.173.198.167:3000/removeUser?groupId=${groupId}&userId=${userId}`, {headers: {"Authorization": token} })
                 .then(response => {
                     alert(response.data.message);
                     const parentElement = document.getElementById('userList');

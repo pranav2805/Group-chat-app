@@ -38,7 +38,7 @@
 
         function makeAdmin(userId){
             const groupId = JSON.parse(localStorage.getItem('lastOpenedGroup'));
-            axios.post(`http://localhost:3000/makeAdmin`,{groupId: groupId, userId: userId}, {headers: {"Authorization": token} })
+            axios.post(`http://35.173.198.167:3000/makeAdmin`,{groupId: groupId, userId: userId}, {headers: {"Authorization": token} })
                 .then(response => {
                     alert(response.data.message);
                 })
