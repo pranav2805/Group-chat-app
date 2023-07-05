@@ -22,7 +22,7 @@ function addUser(e) {
             password: password.value
         }
 
-        axios.post('http://localhost:3000/signup', userDetails)
+        axios.post('http://localhost:5000/signup', userDetails)
             .then(response => {
                 alert(response.data.message);
                 window.location.href = "login.html";
@@ -42,5 +42,5 @@ function addUser(e) {
 function showErrorOnScreen(msg) {
     //console.log(msg);
     errorMsg.innerHTML = `<p> ${msg} </p>`
-    setTimeout(() => errorMsg.remove(), 3000);
+    setTimeout(() => errorMsg.remove(), 5000);
 }

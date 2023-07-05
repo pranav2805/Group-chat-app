@@ -13,7 +13,7 @@ function login(e){
         password: passwordInput.value
     }
 
-    axios.post('http://localhost:3000/login', loginDetails)
+    axios.post('http://localhost:5000/login', loginDetails)
     .then(response => {
         alert(response.data.message);
         //response.redirect('/expenses');
@@ -29,5 +29,5 @@ function login(e){
 function showErrorOnScreen(msg) {
     //console.log(msg);
     errorMsg.innerHTML = `<p> ${msg} </p>`
-    setTimeout(() => errorMsg.remove(), 3000);
+    setTimeout(() => errorMsg.remove(), 5000);
 }

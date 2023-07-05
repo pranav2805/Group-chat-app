@@ -1,3 +1,4 @@
+// const io = require('socket.io')(5000)
 const User = require('../models/user');
 const Message = require('../models/message');
 

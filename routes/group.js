@@ -19,7 +19,7 @@ router.get('/getUsers',userAuthenticate.authenticate,groupController.getUsers);
 
 router.delete('/removeUser',userAuthenticate.authenticate,groupController.removeUser);
 
-router.get('/getUsersAdmin',userAuthenticate.authenticate,groupController.getUsers);
+router.get('/getUsersAdmin',userAuthenticate.authenticate,groupController.getUsersAdmin);
 
 router.post('/makeAdmin',userAuthenticate.authenticate, groupController.makeAdmin);
 

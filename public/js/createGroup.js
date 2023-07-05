@@ -9,7 +9,7 @@ function createGroup(e){
     let obj_group = {
         groupName: groupName.value
     }
-    axios.post('http://localhost:3000/createGroup', obj_group, {headers: {"Authorization": token} })
+    axios.post('http://localhost:5000/createGroup', obj_group, {headers: {"Authorization": token} })
         .then(response => {
             // localStorage.setItem(response.data.group.name, []);
             alert(response.data.message);
