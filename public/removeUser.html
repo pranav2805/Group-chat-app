@@ -11,10 +11,12 @@
     <ul id="userList" class="list-group"></ul>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="../node_modules/socket.io/client-dist/socket.io.js"></script>
     <script>
         const token = localStorage.getItem('token');
         window.addEventListener("DOMContentLoaded", (e) => {
             e.preventDefault();
+            const socket = io('http://localhost:5000');
             const groupId = JSON.parse(localStorage.getItem('lastOpenedGroup'));
             axios.get(`http://localhost:5000/getUsers?groupId=${groupId}`, {headers: {"Authorization": token} })
                 .then(response => {
@@ -22,6 +24,9 @@
                     response.data.users.forEach(data => {
                         showUserOnScreen(data);
                     })
+                    // socket.emit('group-update',() => {
+                    //     console.log('Group update is emitted');
+                    // })
                 })
                 .catch(err => {
                     console.log(err);

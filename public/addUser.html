@@ -24,10 +24,10 @@
                 axios.post(`http://localhost:5000/addUser?groupId=${groupId}`, {email: email.value}, {headers: {"Authorization": token} })
                     .then(response => {
                         alert(response.data.message);
+                        window.location.href = "chat.html";
                         socket.emit('group-update',() => {
                             console.log('Group update is emitted');
                         })
-                        window.location.href = "chat.html";
                     })
                     .catch(err => {
                         alert(err.response.data.message);

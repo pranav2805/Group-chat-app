@@ -49,7 +49,7 @@ exports.getMessages = async(req, res) => {
         if(lastMessageId === undefined)
             lastMessageId = 0;
         const messages = await Message.findAll({
-            attributes: ['id','textMessage','userId','groupId'],
+            attributes: ['id','textMessage','attachment','userId','groupId'],
             where: {groupId: groupId, id : { [Op.gt]: lastMessageId }},
             include: [
                 {

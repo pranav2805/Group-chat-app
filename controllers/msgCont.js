@@ -4,6 +4,8 @@ const Message = require('../models/message');
 
 const sequelize = require('../util/database');
 const { Op } = require("sequelize");
+const UserGroup = require('../models/user-group');
+const {uploadToS3} = require('../services/s3services');
 
 exports.getMessages = async (req, res) => {
     try{
@@ -33,12 +35,27 @@ exports.getMessages = async (req, res) => {
 }
 
 exports.postMessage = async (req, res) => {
-    const groupId = req.query.groupId;
-    // console.log("groupID from post req>>>>",groupId);
+    const {groupId} = req.body;
+    // console.log('BE post message>>>',req.files);
     try{
         const message = req.body.message;
-        const msg = await req.user.createMessage({textMessage: message, groupId: groupId});
-        res.status(201).json({success: true, textMessage: msg.textMessage, userId: req.user.id, user: {name: req.user.name}})
+        const user = await UserGroup.findOne({where: {userId: req.user.id, groupId: groupId}})
+        if(user){
+            const attachmentUrls = [];
+            // console.log("req.file", req.files);
+            if (req.files && req.files.length > 0) {
+                for (const file of req.files) {
+                    // console.log({ buffer: file.buffer, originalname: file.originalname });
+                    const attachmentUrl = await uploadToS3(file.buffer, file.originalname);
+                    attachmentUrls.push(attachmentUrl);
+                }
+            }
+            const msg = await req.user.createMessage({textMessage: message||"", groupId: groupId, attachment: JSON.stringify(attachmentUrls)});
+            res.status(201).json({textMessage: msg.textMessage, attachment: msg.attachment, userId: req.user.id, user: {name: req.user.name}})
+        }else{
+            throw new Error('User is not part of this group!!');
+        }
+        
     } catch(err){
         console.log(err);
         res.status(500).json({err: err.message});

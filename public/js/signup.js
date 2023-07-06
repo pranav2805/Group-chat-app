@@ -1,3 +1,4 @@
+const API = 'http://localhost:5000';
 const form = document.getElementById('signupForm');
 const nameInput = document.getElementById('name');
 const emailInput = document.getElementById('email');
@@ -22,7 +23,7 @@ function addUser(e) {
             password: password.value
         }
 
-        axios.post('http://localhost:5000/signup', userDetails)
+        axios.post(`${API}/signup`, userDetails)
             .then(response => {
                 alert(response.data.message);
                 window.location.href = "login.html";

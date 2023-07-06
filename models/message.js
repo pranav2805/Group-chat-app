@@ -9,7 +9,10 @@ const Message = sequelize.define('message', {
     allowNull: false,
     primaryKey: true
   },
-  textMessage: Sequelize.TEXT
+  textMessage: Sequelize.TEXT,
+  attachment: {
+    type: Sequelize.STRING,
+  },
 });
 
 module.exports = Message;

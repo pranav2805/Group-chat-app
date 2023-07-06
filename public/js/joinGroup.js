@@ -1,3 +1,4 @@
+const API = 'http://localhost:5000';
 const form = document.getElementById('createForm');
 const groupName = document.getElementById('groupName');
 const token = localStorage.getItem('token');
@@ -9,7 +10,7 @@ function joinGroup(e){
     let obj_group = {
         groupName: groupName.value
     }
-    axios.post('http://localhost:5000/joinGroup', obj_group, {headers: {"Authorization": token} })
+    axios.post(`${API}/joinGroup`, obj_group, {headers: {"Authorization": token} })
         .then(response => {
             // localStorage.setItem(response.data.group.name, []);
             alert(response.data.message);

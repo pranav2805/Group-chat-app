@@ -1,3 +1,4 @@
+const API = 'http://localhost:5000';
 const form = document.getElementById('loginForm');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
@@ -13,7 +14,7 @@ function login(e){
         password: passwordInput.value
     }
 
-    axios.post('http://localhost:5000/login', loginDetails)
+    axios.post(`${API}/login`, loginDetails)
     .then(response => {
         alert(response.data.message);
         //response.redirect('/expenses');
