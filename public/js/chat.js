@@ -1,10 +1,19 @@
+const API = 'http://35.173.198.167:3000';
+const socket = io(API);
 const form = document.getElementById('send-message');
 const textMsg = document.getElementById('text-message');
 
 const token = localStorage.getItem('token');
 
-const api = 'http://35.173.198.167:3000'
+socket.on("message-received", () => {
+    getMessagesFromGroup(groupID);
+});
 
+socket.on("groupUpdated", () => {
+    getGroups();
+})
+
+//to get the current group id
 let groupID;
 let groups
 let parsedObject = JSON.parse(localStorage.getItem('groups'));
@@ -33,11 +42,11 @@ function parseJwt(token) {
 
 const decodedToken = parseJwt(token);
 
-window.addEventListener('DOMContentLoaded', () => {
-
-    axios.get('http://35.173.198.167:3000/getGroups', {headers: {"Authorization": token}})
+function getGroups() {
+    axios.get(`${API}/getGroups`, {headers: {"Authorization": token}})
         .then(response => {
             localStorage.setItem('groups', JSON.stringify(response.data));
+            document.getElementById('groups').innerHTML = '';
             response.data.group.forEach(response => {
                 showGroupsOnScreen(response);
             })
@@ -45,58 +54,100 @@ window.addEventListener('DOMContentLoaded', () => {
         .catch(err => {
             console.log(err);
         })
+}
 
+const fileInput = document.getElementById("file-input");
+fileInput.addEventListener("change", () => {
+  if (fileInput.files.length > 0) {
+    const fileName = fileInput.files[0].name;
+    alert(`File attached: ${fileName}`);
+  }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    getGroups();
     groupID = JSON.parse(localStorage.getItem('lastOpenedGroup'));
     getMessagesFromGroup(groupID);
-    
-    // axios.get(`http://35.173.198.167:3000/messages`, {headers: {"Authorization": token} })
-    // .then(response => {
-    //     response.data.messages.forEach(message => {
-    //         showMessageOnScreen(message);
-    //     })
-    // })
-    // .catch(err => {
-    //     console.log(err);
-    // })
 })
 
 // const interval = setInterval(() => {
 //     const parentElement = document.getElementById('messages');
 //     parentElement.innerHTML = '';
 //     getMessages();
-// }, 3000)
+// }, 5000)
 
 // clearInterval(interval);
 
-function addMessage(e){
+async function addMessage(e){
     e.preventDefault();
     const token = localStorage.getItem('token');
+    const message = textMsg.value;
+    const fileInput = document.getElementById("file-input");
 
-    let obj = {
-        message: textMsg.value
+    if(message.trim() === '' && fileInput.files.length == 0){
+        return;
     }
 
-    axios.post(`http://35.173.198.167:3000/messages?groupId=${groupID}`, obj, {headers: {"Authorization": token} })
+    // let obj = {
+    //     message: textMsg.value
+    // }
+
+    const formData = new FormData();
+    formData.append("message", message);
+    formData.append("groupId", groupID);
+    for (const file of fileInput.files) {
+      formData.append("attachment", file);
+    }
+
+    axios.post(`${API}/messages`, formData, 
+    {
+        headers: {
+            "Authorization": token,
+            "Content-Type": "multipart/form-data" 
+        },
+    })
         .then(response => {
-            console.log("response>>>",response);
+            // console.log("response>>>",response);
             showMessageOnScreen(response.data);
+            socket.emit('send-message', () => {
+                console.log('Send message is being emmitted!!');
+            })
         })
         .catch(err => {
+            alert(err.response.data.err);
             console.log(err);
         })
+    // showMessageOnScreen(obj)
+    // await socket.emit('send-message', obj, groupID, {headers: {"Authorization": token} })
     
     textMsg.value = '';
+    fileInput.value = '';
 }
 
 function showMessageOnScreen(obj) {
-    let parentElement = document.getElementById('messages');
-    let childElement;
+    let parentElement = document.getElementById('message-body');
+    // let childElement;
+    let div = document.createElement('div');;
     if(decodedToken.userId === obj.userId){
-        childElement = `<li id=${obj.id} class="list-group-item" style="margin-left:auto"> You: ${obj.textMessage} </li>`
+        // childElement = `<li id=${obj.id} class="list-group-item" style="margin-left:auto"> You: ${obj.textMessage} </li>`
+        // childElement = `<div style="margin-left:auto" class="group-content"> <b>You:</b> ${obj.textMessage} </div>`
+        div.style = "margin-left:auto";
+        div.innerHTML = `<b>You:</b> ${obj.textMessage}`
     }else{
-        childElement = `<li id=${obj.id} class="list-group-item" style="margin-right:auto"> ${obj.user.name}: ${obj.textMessage} </li>`
+        // childElement = `<li id=${obj.id} class="list-group-item" style="margin-right:auto"> ${obj.user.name}: ${obj.textMessage} </li>`
+        // childElement = `<div style="margin-right:auto" class="group-content"> <b>${obj.user.name}:</b> ${obj.textMessage} </div>`
+        div.style = "margin-left:right";
+        div.innerHTML = `<b>${obj.user.name}:</b> ${obj.textMessage}`
     }
-    parentElement.innerHTML = parentElement.innerHTML + childElement;
+    for(const element of JSON.parse(obj.attachment)){
+        const link = document.createElement("a");
+        link.href = element;
+        link.textContent = element;
+        console.log(link);
+        div.appendChild(link);
+    }
+    // parentElement.innerHTML = parentElement.innerHTML + childElement;
+    parentElement.appendChild(div);
 }
 
 //to show group names on screen
@@ -135,7 +186,7 @@ function getMessagesFromGroup(groupId){
     if(groupChats && groupChats.length>0){
         lastMsgId = groupChats[groupChats.length-1].id;
     }
-    axios.get(`http://35.173.198.167:3000/getMessages?groupId=${groupId}&lastMessageId=${lastMsgId}`, {headers: {"Authorization": token} })
+    axios.get(`${API}/getMessages?groupId=${groupId}&lastMessageId=${lastMsgId}`, {headers: {"Authorization": token} })
         .then(response => {
             // console.log(response);
             let newArray;
@@ -144,7 +195,7 @@ function getMessagesFromGroup(groupId){
             }
             else
                 newArray = [...response.data.messages];
-            document.getElementById('messages').innerHTML = '';
+            document.getElementById('message-body').innerHTML = '';
             localStorage.setItem(groupID, JSON.stringify(newArray));
             newArray.forEach(message => {
                 showMessageOnScreen(message);

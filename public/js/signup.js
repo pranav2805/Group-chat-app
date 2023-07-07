@@ -1,3 +1,4 @@
+const API = 'http://35.173.198.167:3000';
 const form = document.getElementById('signupForm');
 const nameInput = document.getElementById('name');
 const emailInput = document.getElementById('email');
@@ -22,7 +23,7 @@ function addUser(e) {
             password: password.value
         }
 
-        axios.post('http://35.173.198.167:3000/signup', userDetails)
+        axios.post(`${API}/signup`, userDetails)
             .then(response => {
                 alert(response.data.message);
                 window.location.href = "login.html";
@@ -42,5 +43,5 @@ function addUser(e) {
 function showErrorOnScreen(msg) {
     //console.log(msg);
     errorMsg.innerHTML = `<p> ${msg} </p>`
-    setTimeout(() => errorMsg.remove(), 3000);
+    setTimeout(() => errorMsg.remove(), 5000);
 }

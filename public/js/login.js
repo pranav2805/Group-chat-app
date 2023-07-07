@@ -1,3 +1,4 @@
+const API = 'http://35.173.198.167:3000';
 const form = document.getElementById('loginForm');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
@@ -13,7 +14,7 @@ function login(e){
         password: passwordInput.value
     }
 
-    axios.post('http://35.173.198.167:3000/login', loginDetails)
+    axios.post(`${API}/login`, loginDetails)
     .then(response => {
         alert(response.data.message);
         //response.redirect('/expenses');
@@ -29,5 +30,5 @@ function login(e){
 function showErrorOnScreen(msg) {
     //console.log(msg);
     errorMsg.innerHTML = `<p> ${msg} </p>`
-    setTimeout(() => errorMsg.remove(), 3000);
+    setTimeout(() => errorMsg.remove(), 5000);
 }

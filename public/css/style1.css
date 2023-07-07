@@ -43,10 +43,23 @@ hr{
     padding: 20px 30px;
     height: 540px;
 }
-hr.vertical {
-    height:100%; /* you might need some positioning for this to work, see other questions about 100% height */
-    width:0;
-    border:5px solid black;
+#message-body{
+    flex: 1;
+    color: black;
+    /* background-color: rgba(0,0,0,0.7); */
+    padding: 20px 30px;
+    height: 540px;
+    overflow-y: scroll;
+}
+#message-body div{
+    background-color: white;
+    padding: 5px;
+    width: fit-content;
+    margin-bottom: 5px;
+    border-radius: 10px;
+}
+#message-container div:nth-child(2n) {
+   background-color: gray;
 }
 li:nth-child(odd) { background: #ffffff; }
 li:nth-child(even) { background: gray; }
@@ -88,13 +101,22 @@ form button:hover{
     transition: 0.2s ease;
 }
 
+#group-names{
+    /* background-color: white; */
+    box-shadow: 2px 2px 20px rgba(0,0,0,0.4)
+}
+
+#heading{
+    box-shadow: 2px 2px 20px rgba(0,0,0,0.4)
+}
+
 .dropbtn {
     background-color: white;
     color: black;
     padding: 12px;
     font-size: 12px;
     border: none;
-    margin-right: auto;
+    margin-right: 10px;
 }
 
 .dropdown {
@@ -125,3 +147,11 @@ form button:hover{
 .dropdown:hover .dropdown-content {display: block;}
 
 .dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+.attachment-icon {
+    cursor: pointer;
+}
+
+.list-group-item {
+    cursor: pointer;
+}

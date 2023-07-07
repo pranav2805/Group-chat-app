@@ -12,9 +12,11 @@
         <a href="chat.html">Go to homepage</a>
     </form>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="../node_modules/socket.io/client-dist/socket.io.js"></script>
     <script>
         function addUser(e){
             e.preventDefault();
+            const socket = io('http://35.173.198.167:3000');
             const token = localStorage.getItem('token');
             const email = document.getElementById('email');
             if(email){
@@ -23,6 +25,9 @@
                     .then(response => {
                         alert(response.data.message);
                         window.location.href = "chat.html";
+                        socket.emit('group-update',() => {
+                            console.log('Group update is emitted');
+                        })
                     })
                     .catch(err => {
                         alert(err.response.data.message);
