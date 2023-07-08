@@ -61,6 +61,8 @@ fileInput.addEventListener("change", () => {
   if (fileInput.files.length > 0) {
     const fileName = fileInput.files[0].name;
     alert(`File attached: ${fileName}`);
+  }else{
+    alert('No file attached!');
   }
 });
 

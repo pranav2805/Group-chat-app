@@ -8,21 +8,15 @@ dotenv.config();
 
 const app = express();
 const { createServer } = require("http");
-const { Server } = require("socket.io");
-
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-  },
-  /* options */
-});
+
 
 const sequelize = require('./util/database');
 const User = require('./models/user');
 const Message = require('./models/message');
 const Group = require('./models/group');
 const UserGroup = require('./models/user-group');
+const setUpSocket = require('./socket');
 
 app.use(cors({
     origin: '*'
@@ -54,22 +48,7 @@ app.use((req, res) => {
     res.sendFile(path.join(__dirname, `public/${req.url}`));
 })
 
-/* 
-! This sets up an event listener for the "connection" event.
-! When a client connects to the server, the callback function is called 
-! with a socket object representing the connection.
-*/
-io.on("connection", (socket) => {
-    console.log("BE: io.on connection");
-  
-    socket.on("send-message", (message) => {
-        io.emit("message-received");
-    });
-
-    socket.on("group-update", () => {
-        io.emit("groupUpdated");
-    })
-});
+setUpSocket(httpServer);
 
 const port = process.env.PORT || 3000;
 
