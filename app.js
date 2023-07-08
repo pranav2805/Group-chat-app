@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -48,6 +49,10 @@ const groupRoutes = require('./routes/group');
 app.use(userRoutes);
 app.use(msgRoutes);
 app.use(groupRoutes);
+
+app.use((req, res) => {
+    res.sendFile(path.join(__dirname, `public/${req.url}`));
+})
 
 /* 
 ! This sets up an event listener for the "connection" event.

@@ -1,6 +1,8 @@
 // const io = require('socket.io')(5000)
 const User = require('../models/user');
 const Message = require('../models/message');
+const ArchivedChat = require("../models/archivedChat");
+const cron = require('node-cron');
 
 const sequelize = require('../util/database');
 const { Op } = require("sequelize");
@@ -61,3 +63,29 @@ exports.postMessage = async (req, res) => {
         res.status(500).json({err: err.message});
     }
 }
+
+cron.schedule("0 0 * * *", async () => {
+    const oneDayAgo = new Date();
+    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+    const oldMessages = await Message.findAll({
+      where: {
+        createdAt: {
+          [Op.lt]: oneDayAgo,
+        },
+      },
+    });
+  
+    await Promise.all(
+      oldMessages.map((message) => ArchivedChat.create(message.dataValues))
+    );
+  
+    // ? Op.It: value is less than `oneDayAgo`.
+    await Message.destroy({
+      where: {
+        createdAt: {
+          [Op.lt]: oneDayAgo,
+        },
+      },
+    });
+});
+

@@ -23,7 +23,7 @@ if(parsedObject){
         groupID = groups[0].groupId;
 }
 
-form.addEventListener('submit', addMessage);
+form.addEventListener('submit', sendMessage);
 
 function parseJwt(token) {
     var base64Url = token.split(".")[1];
@@ -78,7 +78,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // clearInterval(interval);
 
-async function addMessage(e){
+async function sendMessage(e){
     e.preventDefault();
     const token = localStorage.getItem('token');
     const message = textMsg.value;
@@ -143,7 +143,7 @@ function showMessageOnScreen(obj) {
         const link = document.createElement("a");
         link.href = element;
         link.textContent = element;
-        console.log(link);
+        // console.log(link);
         div.appendChild(link);
     }
     // parentElement.innerHTML = parentElement.innerHTML + childElement;

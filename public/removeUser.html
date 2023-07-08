@@ -14,9 +14,9 @@
     <script src="../node_modules/socket.io/client-dist/socket.io.js"></script>
     <script>
         const token = localStorage.getItem('token');
+        const socket = io('http://localhost:5000');
         window.addEventListener("DOMContentLoaded", (e) => {
             e.preventDefault();
-            const socket = io('http://localhost:5000');
             const groupId = JSON.parse(localStorage.getItem('lastOpenedGroup'));
             axios.get(`http://localhost:5000/getUsers?groupId=${groupId}`, {headers: {"Authorization": token} })
                 .then(response => {
@@ -48,9 +48,13 @@
                     alert(response.data.message);
                     const parentElement = document.getElementById('userList');
                     parentElement.removeChild(document.getElementById(userId));
+                    socket.emit('group-update',() => {
+                        console.log('Group update is emitted');
+                    })
                 })
                 .catch(err => {
-                    alert(err.response.data.message);
+                    console.log(err);
+                    alert(err);
                 })
         }
     </script>
